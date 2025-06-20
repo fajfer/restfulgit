@@ -5,17 +5,16 @@ from base64 import b64encode
 from datetime import datetime
 
 from flask import url_for
-from pygit2 import GIT_OBJ_COMMIT, GIT_OBJ_BLOB, GIT_OBJ_TREE, GIT_OBJ_TAG
-
+from pygit2.enums import ObjectType
 from restfulgit.utils.timezones import FixedOffset
 
 
 GIT_MODE_SUBMODULE = 0o0160000
 GIT_OBJ_TYPE_TO_NAME = {
-    GIT_OBJ_COMMIT: 'commit',
-    GIT_OBJ_TREE: 'tree',
-    GIT_OBJ_BLOB: 'blob',
-    GIT_OBJ_TAG: 'tag',
+    ObjectType.COMMIT: 'commit',
+    ObjectType.TREE: 'tree',
+    ObjectType.BLOB: 'blob',
+    ObjectType.TAG: 'tag',
 }
 
 
@@ -87,7 +86,7 @@ def _tree_entries(repo_key, repo, tree, recursive=False, path=''):
             }
         else:
             obj = repo[entry.id]
-            if obj.type == GIT_OBJ_BLOB:
+            if obj.type == ObjectType.BLOB:
                 entry_data = {
                     "path": '%s%s' % (path, entry_name),
                     "sha": str(entry.id),
@@ -96,7 +95,7 @@ def _tree_entries(repo_key, repo, tree, recursive=False, path=''):
                     "url": url_for('plumbing.get_blob', _external=True,
                                    repo_key=repo_key, sha=str(entry.id)),
                 }
-            elif obj.type == GIT_OBJ_TREE:
+            elif obj.type == ObjectType.TREE:
                 if recursive:
                     entry_list += _tree_entries(repo_key, repo, obj, True, '%s%s/' % (path, entry_name))
                 entry_data = {

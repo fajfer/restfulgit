@@ -4,8 +4,8 @@
 from flask import current_app
 from werkzeug.utils import safe_join
 from werkzeug.exceptions import NotFound
-from pygit2 import Repository, GIT_OBJ_COMMIT, GIT_OBJ_BLOB, GIT_OBJ_TREE, GIT_OBJ_TAG, GitError
-
+from pygit2 import GitError, Repository
+from pygit2.enums import ObjectType
 
 def get_repo(repo_key):
     path = safe_join(current_app.config['RESTFULGIT_REPO_BASE_PATH'], repo_key)
@@ -20,7 +20,7 @@ def get_commit(repo, sha):
         commit = repo[str(sha)]
     except KeyError:
         raise NotFound("commit not found")
-    if commit.type != GIT_OBJ_COMMIT:
+    if commit.type != ObjectType.COMMIT:
         raise NotFound("object not a commit")
     return commit
 
@@ -30,13 +30,13 @@ def get_tree(repo, sha):
         obj = repo[str(sha)]
     except KeyError:
         raise NotFound("tree not found")
-    if obj.type == GIT_OBJ_TREE:
+    if obj.type == ObjectType.TREE:
         return obj
-    elif obj.type == GIT_OBJ_COMMIT:
+    elif obj.type == ObjectType.COMMIT:
         return obj.tree
-    elif obj.type == GIT_OBJ_TAG:
+    elif obj.type == ObjectType.TAG:
         obj = repo[obj.target]
-        if obj.type == GIT_OBJ_TAG:
+        if obj.type == ObjectType.TAG:
             return get_tree(repo, obj.target)
         else:
             return obj.tree
@@ -49,7 +49,7 @@ def get_blob(repo, sha):
         blob = repo[str(sha)]
     except KeyError:
         raise NotFound("blob not found")
-    if blob.type != GIT_OBJ_BLOB:
+    if blob.type != ObjectType.BLOB:
         raise NotFound("sha not a blob")
     return blob
 
@@ -59,7 +59,7 @@ def get_tag(repo, sha):
         tag = repo[str(sha)]
     except KeyError:
         raise NotFound("tag not found")
-    if tag.type != GIT_OBJ_TAG:
+    if tag.type != ObjectType.TAG:
         raise NotFound("object not a tag")
     return tag
 

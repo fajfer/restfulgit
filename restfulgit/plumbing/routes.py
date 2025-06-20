@@ -5,8 +5,7 @@ from itertools import islice
 
 from flask import current_app, request, Blueprint
 from werkzeug.exceptions import NotFound, BadRequest
-from pygit2 import GIT_SORT_TIME
-from pygit2.enums import ReferenceType
+from pygit2.enums import ReferenceType, SortMode
 
 from restfulgit.plumbing.retrieval import get_repo, get_commit as _get_commit, get_blob as _get_blob, get_tree as _get_tree, lookup_ref, get_tag as _get_tag
 from restfulgit.plumbing.converters import convert_commit, convert_blob, convert_tree, convert_ref, convert_tag
@@ -57,7 +56,7 @@ def get_commit_list(repo_key):
                 raise NotFound("reference not found")
 
     try:
-        walker = repo.walk(start_commit_id, GIT_SORT_TIME)
+        walker = repo.walk(start_commit_id, SortMode.TIME)
     except ValueError:
         raise BadRequest("invalid start_sha")
     except KeyError:
