@@ -49,5 +49,11 @@ setup(
     provides=[NAME],
     packages=find_packages(exclude=['tests']),
     zip_safe=True,
-    install_requires=requirements
+    install_requires=requirements,
+    entry_points={
+        'console_scripts': [
+            'restfulgit = restfulgit.app:main',
+        ],
+    },
+
 )

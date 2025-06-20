@@ -37,11 +37,11 @@ RUN /app/env/bin/pip install -Ur requirements.txt
 COPY . /app/src/restfulgit
 RUN /app/env/bin/pip install .
 
-RUN /app/env/bin/pip install pycodestyle pylint Flask-Testing coverage nose coveralls filemagic
-RUN git branch ambiguous 1f51b91ac383806df9d322ae67bbad3364f50811 && \
-    git checkout -b master ; \
-    umask 0022
+# RUN /app/env/bin/pip install pycodestyle pylint Flask-Testing coverage nose coveralls filemagic
+# RUN git branch ambiguous 1f51b91ac383806df9d322ae67bbad3364f50811 && \
+#     git checkout -b master ; \
+#     umask 0022
 
 USER 35004:35004
-EXPOSE 5000/tcp
+# EXPOSE 5000/tcp
 CMD ["/app/env/bin/restfulgit"]
