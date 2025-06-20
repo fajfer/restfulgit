@@ -5,7 +5,8 @@ from itertools import islice
 
 from flask import current_app, request, Blueprint
 from werkzeug.exceptions import NotFound, BadRequest
-from pygit2 import GIT_REF_SYMBOLIC, GIT_SORT_TIME
+from pygit2 import GIT_SORT_TIME
+from pygit2.enums import ReferenceType
 
 from restfulgit.plumbing.retrieval import get_repo, get_commit as _get_commit, get_blob as _get_blob, get_tree as _get_tree, lookup_ref, get_tag as _get_tag
 from restfulgit.plumbing.converters import convert_commit, convert_blob, convert_tree, convert_ref, convert_tag
@@ -131,7 +132,7 @@ def get_refs(repo_key, ref_path=None):
     repo = get_repo(repo_key)
     ref_names = filter(lambda x: x.startswith(ref_path), repo.listall_references())
     references = (repo.lookup_reference(ref_name) for ref_name in ref_names)
-    nonsymbolic_refs = filter(lambda x: x.type != GIT_REF_SYMBOLIC, references)
+    nonsymbolic_refs = filter(lambda x: x.type != ReferenceType.SYMBOLIC, references)
     ref_data = [
         convert_ref(repo_key, reference, repo[reference.target])
         for reference in nonsymbolic_refs

@@ -9,7 +9,7 @@ from tempfile import mkstemp as _make_temp_file_handle
 from io import BytesIO
 
 from flask import current_app, Blueprint, send_file
-from pygit2 import GIT_OBJ_BLOB, GIT_OBJ_TREE
+from pygit2._pygit2 import _GIT_OBJ_BLOB, _GIT_OBJ_TREE
 
 from restfulgit.plumbing.retrieval import get_repo, get_tree
 from restfulgit.plumbing.converters import GIT_MODE_SUBMODULE
@@ -53,10 +53,10 @@ def _walk_tree_recursively(repo, tree, blobs_only=False, base_path=''):
             continue  # FIX ME: handle submodules & symlinks
         path = base_path + entry.name
         obj = repo[entry.id]
-        if not blobs_only or obj.type == GIT_OBJ_BLOB:
+        if not blobs_only or obj.type == _GIT_OBJ_BLOB:
             yield path, entry.filemode, obj
 
-        if obj.type == GIT_OBJ_TREE:
+        if obj.type == _GIT_OBJ_TREE:
             for subpath, subfilemode, subobj in _walk_tree_recursively(repo, obj, blobs_only, (path + '/')):
                 yield subpath, subfilemode, subobj
 
@@ -143,17 +143,17 @@ def get_tarball(repo_key, branch_or_tag_or_sha):
             tar_info = tarfile.TarInfo(os.path.join(wrapper_dir, path))
             tar_info.mtime = timestamp
 
-            if obj.type == GIT_OBJ_BLOB:
+            if obj.type == _GIT_OBJ_BLOB:
                 tar_info.size = obj.size
 
-            if obj.type == GIT_OBJ_TREE:
+            if obj.type == _GIT_OBJ_TREE:
                 filemode = 0o755  # git doesn't store meaningful directory perms
             tar_info.mode = filemode
 
-            if obj.type == GIT_OBJ_BLOB:
+            if obj.type == _GIT_OBJ_BLOB:
                 tar_info.type = tarfile.REGTYPE
                 content = BytesIO(obj.data)
-            elif obj.type == GIT_OBJ_TREE:
+            elif obj.type == _GIT_OBJ_TREE:
                 tar_info.type = tarfile.DIRTYPE
                 content = None
             # FIX ME: handle submodules & symlinks

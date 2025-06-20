@@ -5,14 +5,16 @@ import os
 
 from flask import current_app, url_for, safe_join
 from werkzeug.exceptions import NotFound, BadRequest
-from pygit2 import GIT_OBJ_COMMIT, GIT_OBJ_BLOB, GIT_OBJ_TREE, GIT_OBJ_TAG, GIT_REF_SYMBOLIC, GIT_BLAME_TRACK_COPIES_SAME_COMMIT_MOVES, GIT_BLAME_TRACK_COPIES_SAME_COMMIT_COPIES, GIT_SORT_NONE, GitError
+from pygit2 import GIT_BLAME_TRACK_COPIES_SAME_COMMIT_MOVES, GIT_BLAME_TRACK_COPIES_SAME_COMMIT_COPIES, GIT_SORT_NONE, GitError
+from pygit2.enums import ReferenceType
+from pygit2._pygit2 import _GIT_OBJ_COMMIT, _GIT_OBJ_BLOB, _GIT_OBJ_TREE, _GIT_OBJ_TAG 
 from restfulgit.plumbing.converters import GIT_OBJ_TYPE_TO_NAME, encode_blob_data
 
 
 DEFAULT_GIT_DESCRIPTION = "Unnamed repository; edit this file 'description' to name the repository.\n"
 GIT_OBJ_TO_PORCELAIN_NAME = {
-    GIT_OBJ_TREE: 'dir',
-    GIT_OBJ_BLOB: 'file',
+    _GIT_OBJ_TREE: 'dir',
+    _GIT_OBJ_BLOB: 'file',
 }
 
 
@@ -41,8 +43,8 @@ def get_repo_names():
 def get_commit_for_refspec(repo, branch_or_tag_or_sha):
     try:
         commit = repo.revparse_single(branch_or_tag_or_sha)
-        if commit.type == GIT_OBJ_TAG:
-            commit = commit.peel(GIT_OBJ_COMMIT)
+        if commit.type == _GIT_OBJ_TAG:
+            commit = commit.peel(_GIT_OBJ_COMMIT)
         return commit
     except KeyError:
         raise NotFound("no such branch, tag, or commit SHA")
@@ -60,7 +62,7 @@ def get_object_from_path(repo, tree, path):
 
     ctree = tree
     for i, path_seg in enumerate(path_segments):
-        if ctree.type != GIT_OBJ_TREE:
+        if ctree.type != _GIT_OBJ_TREE:
             raise NotFound("invalid path; traversal unexpectedly encountered a non-tree")
         if not path_seg and i == len(path_segments) - 1:  # allow trailing slash in paths to directories
             continue
@@ -93,7 +95,7 @@ def get_repo_description(repo_key):
 
 def get_raw_file_content(repo, tree, path):
     git_obj = get_object_from_path(repo, tree, path)
-    if git_obj.type != GIT_OBJ_BLOB:
+    if git_obj.type != _GIT_OBJ_BLOB:
         raise BadRequest("path resolved to non-blob object")
     return git_obj.data
 
@@ -145,7 +147,7 @@ def get_authors(repo):
 # FIX ME: should be in different module?
 def get_contents(repo_key, repo, refspec, file_path, obj, _recursing=False):
     # FIX ME: implement symlink and submodule cases
-    if not _recursing and obj.type == GIT_OBJ_TREE:
+    if not _recursing and obj.type == _GIT_OBJ_TREE:
         entries = [
             get_contents(repo_key, repo, refspec, os.path.join(file_path, entry.name), repo[entry.id], _recursing=True)
             for entry in obj
@@ -161,7 +163,7 @@ def get_contents(repo_key, repo, refspec, file_path, obj, _recursing=False):
         "sha": str(obj.id),
         "name": os.path.basename(file_path),
         "path": file_path,
-        "size": (obj.size if obj.type == GIT_OBJ_BLOB else 0),
+        "size": (obj.size if obj.type == _GIT_OBJ_BLOB else 0),
         "url": contents_url,
         "git_url": git_url,
         "_links": {
@@ -169,7 +171,7 @@ def get_contents(repo_key, repo, refspec, file_path, obj, _recursing=False):
             "git": git_url,
         }
     }
-    if not _recursing and obj.type == GIT_OBJ_BLOB:
+    if not _recursing and obj.type == _GIT_OBJ_BLOB:
         encoding, data = encode_blob_data(obj.data)
         result["encoding"] = encoding
         result["content"] = data
@@ -189,7 +191,7 @@ def _get_other_nonsymbolic_refs(repo, main_ref_name):
         if ref_name == main_ref_name:
             continue
         ref = repo.lookup_reference(ref_name)
-        if ref.type == GIT_REF_SYMBOLIC:
+        if ref.type == ReferenceType.SYMBOLIC:
             continue
         yield ref
 

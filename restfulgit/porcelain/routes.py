@@ -7,7 +7,7 @@ from collections import defaultdict
 
 from flask import request, Response, Blueprint, url_for
 from werkzeug.exceptions import NotFound, BadRequest
-from pygit2 import GIT_SORT_TOPOLOGICAL, GIT_SORT_TIME, GIT_SORT_REVERSE
+from pygit2.enums import SortMode
 
 from restfulgit.plumbing.retrieval import get_repo, lookup_ref, get_tree
 from restfulgit.plumbing.converters import convert_tag
@@ -109,9 +109,9 @@ def get_commits_unique_to_branch(repo_key, branch_name, sort):  # NOTE: This end
     repo = get_repo(repo_key)
     branch = _get_branch(repo, branch_name)
     if sort == 'chronological':
-        sort = GIT_SORT_TIME | GIT_SORT_REVERSE
+        sort = SortMode.TIME | SortMode.REVERSE
     else:
-        sort = GIT_SORT_TOPOLOGICAL | GIT_SORT_REVERSE
+        sort = SortMode.TOPOLOGICAL | SortMode.REVERSE
     commits = list(_get_commits_unique_to_branch(repo, branch, sort))
     return {
         "commits": [convert_commit(repo_key, repo, commit) for commit in commits]
