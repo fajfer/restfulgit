@@ -1,4 +1,4 @@
 Flask~=3.1.1
 pygit2~=1.18.0
-python-magic~=0.4.27
+python-libmagic>=0.7
 waitress~=3.0.2
