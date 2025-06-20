@@ -2244,7 +2244,7 @@ class BlameTestCase(_RestfulGitTestCase):  # NOTE: This API is a RestfulGit exte
             'lines': [
                 {
                     'commit': '13e9ff41ba4704d6ca91988f9216adeeee8c79b5',
-                    'line': 'from flask import Flask, url_for, request, Response, current_app, Blueprint, safe_join, send_from_directory, make_response, send_file',
+                    'line': 'from flask import Flask, url_for, request, Response, current_app, Blueprint, send_from_directory, make_response, send_file',
                     'lineNum': 4,
                     'origPath': 'restfulgit/__init__.py'},
                 {
@@ -2258,6 +2258,12 @@ class BlameTestCase(_RestfulGitTestCase):  # NOTE: This API is a RestfulGit exte
                     'line': 'from werkzeug.routing import BaseConverter',
                     'lineNum': 6,
                     'origPath': 'gitapi.py'
+                },
+                {
+                    'commit': 'ba3f032dbd2ead6a6610f3bf3b66f05cb628f579',
+                    'line': 'from werkzeug.utils import safe_join',
+                    'lineNum': 7,
+                    'origPath': 'restfulgit/__init__.py'
                 }
             ]
         })

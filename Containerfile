@@ -43,5 +43,5 @@ RUN /app/env/bin/pip install .
 #     umask 0022
 
 USER 35004:35004
-# EXPOSE 5000/tcp
+EXPOSE 8080/tcp
 CMD ["/app/env/bin/restfulgit"]

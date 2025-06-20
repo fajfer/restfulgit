@@ -3,7 +3,8 @@
 
 import os
 
-from flask import current_app, url_for, safe_join
+from flask import current_app, url_for
+from werkzeug.utils import safe_join
 from werkzeug.exceptions import NotFound, BadRequest
 from pygit2 import GIT_BLAME_TRACK_COPIES_SAME_COMMIT_MOVES, GIT_BLAME_TRACK_COPIES_SAME_COMMIT_COPIES, GIT_SORT_NONE, GitError
 from pygit2.enums import ReferenceType
