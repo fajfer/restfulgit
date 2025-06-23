@@ -6,10 +6,10 @@ from restfulgit.archives import archives
 from restfulgit.plumbing.routes import plumbing
 from restfulgit.porcelain.routes import porcelain
 from restfulgit.utils.json import jsonify
-from restfulgit.utils.json_err_pages import {
+from restfulgit.utils.json_err_pages import (
     json_error_page,
     register_general_error_handler
-}
+)
 
 BLUEPRINTS = (plumbing, porcelain, archives)
 
@@ -30,8 +30,19 @@ def run():
 
     app = Flask(__name__)
     app.config.from_object(DefaultConfig)
+
+    register_general_error_handler(app, json_error_page)
+
     for blueprint in BLUEPRINTS:
         app.register_blueprint(blueprint)
-    register_general_error_handler(app, json_error_page)
-    app.debug = app.config["DEBUG"]
+
+    @app.route("/")
+    @jsonify
+    def index():
+        links = []
+        for rule in app.url_map.iter_rules():
+            if str(rule).startswith("/repos"):
+                links.append(str(rule))
+        return links
+
     serve(app, host='0.0.0.0', port=8080)

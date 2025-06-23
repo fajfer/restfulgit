@@ -1,0 +1,15 @@
+services:
+  gerrit:
+    image: docker.io/gerritcodereview/gerrit
+    ports:
+      - "29418:29418"
+      - "80:8080"
+    volumes:
+      - /home/fajfer/tmp/gerrit/git:/var/gerrit/git
+
+  restfulgit:
+    image: fajfer/restfulgit:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - /home/fajfer/tmp/gerrit/git:/git/:ro

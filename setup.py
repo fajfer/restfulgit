@@ -7,7 +7,7 @@ import sys
 
 NAME = 'restfulgit'
 
-VERSION = '0.1.1'
+VERSION = '0.1.2'
 
 CLASSIFIERS = [
     'Development Status :: 2 - Beta',
@@ -42,8 +42,8 @@ setup(
     description='A restful interface for accessing data from Git repositories',
     long_description=open('README.md').read(),
     classifiers=CLASSIFIERS,
-    maintainer='Kaiwen Xu',
-    maintainer_email='kaiwen.xu@hulu.com',
+    maintainer='Damian Fajfer',
+    maintainer_email='damian@fajfer.org',
     author='Rajiv Makhijani',
     url='https://github.com/hulu/restfulgit',
     provides=[NAME],
@@ -52,7 +52,7 @@ setup(
     install_requires=requirements,
     entry_points={
         'console_scripts': [
-            'restfulgit = restfulgit.app:main',
+            'restfulgit = restfulgit.server:run',
         ],
     },
 
