@@ -1,4 +1,4 @@
-name: Publish OCR image
+name: Publish OCI image
 
 on:
   push:
@@ -11,7 +11,7 @@ env:
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
-  TAG_NAME: "latest"
+  TAG_NAME: latest, 0.1.2
 
 jobs:
   build:
@@ -59,7 +59,7 @@ jobs:
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
-      - name: Build and push OCR image
+      - name: Build and push OCI image
         id: build-and-push
         uses: mr-smithers-excellent/docker-build-push@v6
         with:
@@ -80,7 +80,7 @@ jobs:
       # repository is public to avoid leaking data.  If you would like to publish
       # transparency data even for private images, pass --force to cosign below.
       # https://github.com/sigstore/cosign
-      - name: Sign the published OCR image
+      - name: Sign the published OCI image
         if: ${{ github.event_name != 'pull_request' }}
         env:
           # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
