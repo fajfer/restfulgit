@@ -10,6 +10,6 @@ services:
   restfulgit:
     image: fajfer/restfulgit:latest
     ports:
-      - "8080:8080"
+      - "5000:5000"
     volumes:
       - /home/fajfer/tmp/gerrit/git:/git/:ro
