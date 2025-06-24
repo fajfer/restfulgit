@@ -27,7 +27,7 @@ def detect_repos(path, depth=5):
             yield path
             break
         if dirent.name.endswith('.git'):
-            yield dirent.path
+            yield dirent.path[:-4]
             continue
         if depth > 1:
             yield from detect_repos(dirent.path, depth=depth-1)

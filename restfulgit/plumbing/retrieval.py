@@ -8,11 +8,14 @@ from pygit2 import GitError, Repository
 from pygit2.enums import ObjectType
 
 def get_repo(repo_key):
-    path = safe_join(current_app.config['RESTFULGIT_REPO_BASE_PATH'], repo_key)
-    try:
-        return Repository(path)
-    except GitError:
-        raise NotFound("repository not found")
+    repo_dirs = [repo_key, f"{repo_key}.git"]
+    for repo_dir in repo_dirs:
+        repo_path = safe_join(current_app.config['RESTFULGIT_REPO_BASE_PATH'], repo_dir)
+        try:
+            return Repository(repo_path)
+        except GitError:
+            continue
+    raise NotFound("repository not found")
 
 
 def get_commit(repo, sha):

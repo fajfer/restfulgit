@@ -254,7 +254,7 @@ class RepoKeyTestCase(_RestfulGitTestCase):
             resp = self.client.get('/repos/')
             repo_names = {repo['name'] for repo in resp.json}
             self.assertEquals(repo_names, {
-                'onedir/bare.git', 'second/more/nested/repo'})
+                'onedir/bare', 'second/more/nested/repo'})
 
 
 class SHAConverterTestCase(_RestfulGitTestCase):
